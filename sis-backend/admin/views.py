@@ -5,6 +5,7 @@ from Model.models import sisUser
 from Model.serializers import UserSerializer
 from Model import serializers
 import datetime
+import jwt
 import json
 # Create your views here.
 
@@ -78,7 +79,7 @@ def logIn(request):
     if len(user)==0:
         return Response("Wrong Credentials")
     if check_password(data['password'],user[0]['password']):
-        return Response(user) 
+        return Response(jwt.encode(payload=UserSerializer(user[0],many=False).data,key='secret',algorithm="HS256")) 
     return Response("Wrong Credentials")
         
     

@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password,check_password
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from Model.models import sisUser
+from Model.models import sisUser,courses
 from Model.serializers import UserSerializer
 from Model import serializers
 import datetime
@@ -82,4 +82,9 @@ def logIn(request):
         return Response(jwt.encode(payload=UserSerializer(user[0],many=False).data,key='secret',algorithm="HS256")) 
     return Response("Wrong Credentials")
         
-    
+@api_view(['POST'])
+def addCourse(request):
+    data=json.loads(request.body)
+    new_course=courses(code="MEN 200",nb_of_credits=3,title="SCIENCE OF MATERIALS",faculty="FE",department="ME")
+    new_course.save()
+    return Response({"message":"Successful"})

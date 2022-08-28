@@ -22,14 +22,27 @@ def sayHi(request):
 
 @api_view(["POST"])
 def signUp(request):
+    all_users=sisUser.objects.all()
+    # Auto generate user id
     curr_year=str(datetime.date.today().year)
-    users=sisUser.objects.filter(id__startswith=str(datetime.date.today().year)).values()
-    newest_user_id=users[len(users)-1]['id'] if len(users)!=0 else 0000
+    curr_year_users=sisUser.objects.filter(id__startswith=str(datetime.date.today().year)).values()
+    newest_user_id=curr_year_users[len(curr_year_users)-1]['id'] if len(curr_year_users)!=0 else 0000
     if str(newest_user_id)[0:4]==curr_year:
         new_user_id=int(newest_user_id)+1
     else:
         new_user_id=curr_year+"0000"
     data=json.loads(request.body)
-    newUser=sisUser(id=new_user_id,fname=data['fname'],email=data['email'],password=make_password(data['password']))
+    # Auto generate user email
+    fname=str(data['fname']).split(" ")
+    email=""
+    for i in range(len(fname)):
+        if i==len(fname)-1:
+            fname[i]=fname[i].lower()
+            email+=fname[i]
+            continue
+        fname[i]=fname[i].lower()[0]
+        email+=fname[i]
+    email+="@university.com"
+    newUser=sisUser(id=new_user_id,fname=data['fname'],email=email,password=make_password(data['password']))
     newUser.save()
     return Response({'message':'succesful'})

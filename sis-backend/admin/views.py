@@ -1,4 +1,4 @@
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password,check_password
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from Model.models import sisUser
@@ -13,6 +13,8 @@ def getRoutes(request):
     routes=[
         'GET /api',
         'GET /api/sayHi',
+        'GET /api/signUp',
+        'GET /api/logIn',
     ]
     return Response(routes)
 
@@ -68,3 +70,15 @@ def signUp(request):
     newUser.save()
     
     return Response({'message':'succesful'})
+
+@api_view(['GET'])
+def logIn(request):
+    data=json.loads(request.body)
+    user=sisUser.objects.filter(id=data['id']).values()
+    if len(user)==0:
+        return Response("Wrong Credentials")
+    if check_password(data['password'],user[0]['password']):
+        return Response(user) 
+    return Response("Wrong Credentials")
+        
+    

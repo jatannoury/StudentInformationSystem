@@ -26,7 +26,7 @@ class courses(models.Model):
     
 class availableCourses(models.Model):
     semester=models.CharField(max_length=12)
-    code=models.ForeignKey(courses,on_delete=models.CASCADE)
+    code=models.CharField(max_length=12)
     instructor=models.CharField(max_length=200)
     registered_seats=models.IntegerField()
     available_seats=models.IntegerField()

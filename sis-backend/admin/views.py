@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from Model.models import sisUser
@@ -25,10 +26,10 @@ def signUp(request):
     users=sisUser.objects.filter(id__startswith=str(datetime.date.today().year)).values()
     newest_user_id=users[len(users)-1]['id'] if len(users)!=0 else 0000
     if str(newest_user_id)[0:4]==curr_year:
-        new_user_id=newest_user_id+1
+        new_user_id=int(newest_user_id)+1
     else:
         new_user_id=curr_year+"0000"
     data=json.loads(request.body)
-    newUser=sisUser(id=new_user_id,fname=data['fname'],email=data['email'],password=data['password'])
+    newUser=sisUser(id=new_user_id,fname=data['fname'],email=data['email'],password=make_password(data['password']))
     newUser.save()
     return Response({'message':'succesful'})

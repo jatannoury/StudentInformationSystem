@@ -16,6 +16,8 @@ def getRoutes(request):
         'GET /api/sayHi',
         'GET /api/signUp',
         'GET /api/logIn',
+        'POST /api/addCourse',
+        'POST /api/addToAvailableCourses',
     ]
     return Response(routes)
 
@@ -89,9 +91,17 @@ def addCourse(request):
     new_course.save()
     return Response({"message":"Successful"})
 
+
+    
+
 @api_view(['POST'])
 def addToAvailableCourses(request):
     data=json.loads(request.body)
-    new_available_course=availableCourses(semester=data['semester'],code=data['code'],instructor=data['instructor'],registered_seats=data['registered_seats'],available_seats=data['available_seats'],time=data['time'])
+    new_available_course=availableCourses(semester=data['semester'],code=data['code'],instructor=data['instructor'] if data["instructor"] else "Staff",registered_seats=data['registered_seats'],available_seats=data['available_seats'],time=data['time'])
+    available_course=availableCourses.objects.filter(code=data['code'])
+    if available_course:
+        availableCourses.objects.filter(code=data['code']).update(semester=data['semester'],code=data['code'],instructor=data['instructor'] if data["instructor"] else "Staff",registered_seats=data['registered_seats'],available_seats=data['available_seats'],time=data['time'])
+        return Response({'message':'Successful Update'})
+        
     new_available_course.save()
     return Response({'message':'Successful'})

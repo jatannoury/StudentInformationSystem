@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 
 # Create your models here.
@@ -27,12 +28,12 @@ class courses(models.Model):
 class availableCourses(models.Model):
     semester=models.CharField(max_length=12)
     code=models.CharField(max_length=12)
-    instructor=models.CharField(max_length=200)
+    instructor=models.CharField(max_length=200,default="Staff")
     registered_seats=models.IntegerField()
     available_seats=models.IntegerField()
     time=models.CharField(max_length=200)
     
     def __str__(self):
-        return self.fname
+        return self.code
     
     

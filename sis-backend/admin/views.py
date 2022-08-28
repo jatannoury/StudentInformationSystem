@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password,check_password
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from Model.models import sisUser,courses
+from Model.models import sisUser,courses,availableCourses
 from Model.serializers import UserSerializer
 from Model import serializers
 import datetime
@@ -79,12 +79,19 @@ def logIn(request):
     if len(user)==0:
         return Response("Wrong Credentials")
     if check_password(data['password'],user[0]['password']):
-        return Response(jwt.encode(payload=UserSerializer(user[0],many=False).data,key='secret',algorithm="HS256")) 
+        return Response(user) 
     return Response("Wrong Credentials")
         
 @api_view(['POST'])
 def addCourse(request):
     data=json.loads(request.body)
-    new_course=courses(code="MEN 200",nb_of_credits=3,title="SCIENCE OF MATERIALS",faculty="FE",department="ME")
+    new_course=courses(code=data['code'],nb_of_credits=data['nb_of_credits'],title=data['title'],faculty=data['faculty'],department=data['department'])
     new_course.save()
     return Response({"message":"Successful"})
+
+@api_view(['POST'])
+def addToAvailableCourses(request):
+    data=json.loads(request.body)
+    new_available_course=availableCourses(semester=data['semester'],code=data['code'],instructor=data['instructor'],registered_seats=data['registered_seats'],available_seats=data['available_seats'],time=data['time'])
+    new_available_course.save()
+    return Response({'message':'Successful'})

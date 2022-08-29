@@ -4,5 +4,6 @@ from . import views
 urlpatterns = [
     path('',views.getRoutes),
     path("searchCourse/",views.searchCourse),
+    path("registerClass/",views.registerClass),
     
 ]

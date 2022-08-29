@@ -9,6 +9,11 @@ import jwt
 import json
 # Create your views here.
 
+#Helper Functions
+def getAdmin():
+    return sisUser.objects.filter(isAdmin=True).values()
+    
+
 @api_view(['GET'])
 def getRoutes(request):
     routes=[
@@ -90,6 +95,15 @@ def addCourse(request):
     new_course=courses(code=data['code'],nb_of_credits=data['nb_of_credits'],title=data['title'],faculty=data['faculty'],department=data['department'])
     new_course.save()
     return Response({"message":"Successful"})
+
+@api_view(['POST'])
+def toggleRegistrationAccess(request):
+    admin=getAdmin()
+    sisUser.objects.filter(isAdmin=True).update(admin_allows_registration=not admin[0]['admin_allows_registration'])
+    return Response({"message":"Succesful"})
+    
+    
+
 
 
     

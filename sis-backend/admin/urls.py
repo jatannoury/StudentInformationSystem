@@ -9,5 +9,6 @@ urlpatterns = [
     path("addCourse/",views.addCourse),
     path("addToAvailableCourses/",views.addToAvailableCourses),
     path("toggleRegistrationAccess/",views.toggleRegistrationAccess),
+    path("getStudent/",views.getStudent),
     
 ]

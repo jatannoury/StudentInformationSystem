@@ -12,6 +12,8 @@ class sisUser(models.Model):
     isAdmin=models.BooleanField(default=False)
     admin_allows_registration=models.BooleanField(default=False)
     created=models.DateTimeField(auto_now_add=True)
+    is_registered_in_curr_sem=models.BooleanField(default=False)
+    student_status=models.CharField(default="Not Registered",max_length=20)
     
     def __str__(self):
         return self.fname

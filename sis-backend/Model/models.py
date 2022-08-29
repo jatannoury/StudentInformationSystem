@@ -10,6 +10,7 @@ class sisUser(models.Model):
     email=models.CharField(max_length=100)
     password=models.CharField(max_length=100)
     isAdmin=models.BooleanField(default=False)
+    admin_allows_registration=models.BooleanField(default=False)
     created=models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

@@ -7,6 +7,7 @@ urlpatterns = [
     path("signUp/",views.signUp),
     path("logIn/",views.logIn),
     path("addCourse/",views.addCourse),
-    path("addToAvailableCourses/",views.addToAvailableCourses)
+    path("addToAvailableCourses/",views.addToAvailableCourses),
+    path("toggleRegistrationAccess/",views.toggleRegistrationAccess),
     
 ]

@@ -5,7 +5,7 @@ from Model.models import sisUser,courses,availableCourses
 from Model.serializers import UserSerializer
 from Model import serializers
 import datetime
-import jwt
+# import jwt
 import json
 # Create your views here.
 
@@ -21,7 +21,9 @@ def getRoutes(request):
         'GET /api/sayHi',
         'GET /api/signUp',
         'GET /api/logIn',
+        'GET /api/getStudent',
         'POST /api/addCourse',
+        'POST /api/toggleRegistrationAccess',
         'POST /api/addToAvailableCourses',
     ]
     return Response(routes)
@@ -119,3 +121,18 @@ def addToAvailableCourses(request):
         
     new_available_course.save()
     return Response({'message':'Successful'})
+
+@api_view(['GET'])
+def getStudent(request):
+    users=sisUser.objects
+    data=json.loads(request.body)
+    if 'student_id' in data:
+        return Response(users.filter(id=data['student_id']).values())
+    elif 'fname' in data:
+        return Response(users.filter(fname=data['fname']).values())
+    elif 'email' in data:
+        return Response(users.filter(email=data['email']).values())
+    else:
+        return Response(users.all().values())
+    
+    

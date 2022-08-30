@@ -15,7 +15,6 @@ class sisUser(models.Model):
     created=models.DateTimeField(auto_now_add=True)
     is_registered_in_curr_sem=models.BooleanField(default=False)
     student_status=models.CharField(default="Not Registered",max_length=20)
-    is_instructor=models.BooleanField(default=False)
     
     def __str__(self):
         return self.fname
@@ -46,7 +45,7 @@ class availableCourses(models.Model):
 class registeredCourses(models.Model):
     student_id=models.CharField(max_length=12)
     registered_class_id=models.CharField(max_length=10)
-    instructor_name=models.CharField(max_length=10)
+    instructor_name=models.CharField(max_length=200)
     time=models.CharField(max_length=200)
     room=models.CharField(max_length=20)
     grade=models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(4.0)],default="0.00")

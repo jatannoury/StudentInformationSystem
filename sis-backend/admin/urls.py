@@ -10,5 +10,8 @@ urlpatterns = [
     path("addToAvailableCourses/",views.addToAvailableCourses),
     path("toggleRegistrationAccess/",views.toggleRegistrationAccess),
     path("getStudent/",views.getStudent),
+    path("endSemester/",views.endSemester),
+    # path("setStudentGrade/",views.setStudentGrade),
+    # path("addInstructor/",views.addInstructor),
     
 ]

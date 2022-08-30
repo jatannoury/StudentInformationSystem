@@ -11,7 +11,7 @@ import json
 
 #Helper Functions
 def getAdmin():
-    return sisUser.objects.filter(isAdmin=True).values()
+    return sisUser.objects.filter(user_type=1).values()
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -44,7 +44,10 @@ def registerClass(request):
     if admin[0]['admin_allows_registration']==False:
         return Response({"message":"Not Registration period"})
     data=json.loads(request.body)
+    sisUser.objects.filter(id=data['student_id']).update(is_registered_in_curr_sem=True)
     new_course_registered=registeredCourses(student_id=data['student_id'],registered_class_id=data['registered_class_id'],instructor_name=data['instructor_name'],time=data['time'],room=data['room'])
+    available_course=availableCourses.objects.filter(id=data['registered_class_id'])
+    available_course.update(available_seats=available_course.values()[0]['available_seats']-1,registered_seats=available_course.values()[0]['registered_seats']+1)
     new_course_registered.save()
     return Response({"message":"Succesful"})
     

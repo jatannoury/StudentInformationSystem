@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password,check_password
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from Model.models import sisUser,courses,availableCourses
+from Model.models import sisUser,courses,availableCourses,registeredCourses
 from Model.serializers import UserSerializer
 from Model import serializers
 import datetime
@@ -11,8 +11,15 @@ import json
 
 #Helper Functions
 def getAdmin():
-    return sisUser.objects.filter(isAdmin=True).values()
-    
+    return sisUser.objects.filter(user_type=1).values()
+
+def toggleRegistrationAccess():
+    admin=getAdmin()
+    sisUser.objects.filter(user_type=1).update(admin_allows_registration=not admin[0]['admin_allows_registration'])
+
+def getInstructorCurrentCourses(instructor):
+    curr_courses=availableCourses.objects.filter(instructor=instructor).values()
+    return curr_courses
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -98,24 +105,21 @@ def addCourse(request):
     new_course.save()
     return Response({"message":"Successful"})
 
-@api_view(['POST'])
-def toggleRegistrationAccess(request):
-    admin=getAdmin()
-    sisUser.objects.filter(isAdmin=True).update(admin_allows_registration=not admin[0]['admin_allows_registration'])
-    return Response({"message":"Succesful"})
-    
-    
-
-
-
     
 
 @api_view(['POST'])
 def addToAvailableCourses(request):
     data=json.loads(request.body)
     new_available_course=availableCourses(semester=data['semester'],code=data['code'],instructor=data['instructor'] if data["instructor"] else "Staff",registered_seats=data['registered_seats'],available_seats=data['available_seats'],time=data['time'])
-    available_course=availableCourses.objects.filter(code=data['code'])
-    if available_course:
+    available_courses=availableCourses.objects.filter(code=data['code'])
+    instructor_courses=getInstructorCurrentCourses(data['instructor'])
+    for available_course in instructor_courses:
+        if available_course['time']==data['time']:
+            return Response({"message":"Instructor Is reserved for this timeline"})
+        else:
+            continue
+    
+    if available_courses:
         availableCourses.objects.filter(code=data['code']).update(semester=data['semester'],code=data['code'],instructor=data['instructor'] if data["instructor"] else "Staff",registered_seats=data['registered_seats'],available_seats=data['available_seats'],time=data['time'])
         return Response({'message':'Successful Update'})
         
@@ -135,4 +139,12 @@ def getStudent(request):
     else:
         return Response(users.all().values())
     
+    
+@api_view(['DELETE'])
+def endSemester(request):
+    availableCourses.objects.all().delete()
+    toggleRegistrationAccess()
+    all_users=sisUser.objects.all().update(is_registered_in_curr_sem=False)
+    
+    return Response({"message":"Succesful"})
     
